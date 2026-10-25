@@ -1,0 +1,18 @@
+"""Local dev server with no-cache headers (Chrome module-cache workaround)."""
+import functools
+import http.server
+import sys
+
+
+class NoCacheHandler(http.server.SimpleHTTPRequestHandler):
+    def end_headers(self):
+        self.send_header('Cache-Control', 'no-cache, no-store, must-revalidate')
+        super().end_headers()
+
+
+if __name__ == '__main__':
+    port = int(sys.argv[1]) if len(sys.argv) > 1 else 8806
+    root = '/Users/mekzenx2/Movies/蔡智鑫-作品集/PCD2026_虚拟何为/interactive-site/projects/unbuilt-city'
+    server = http.server.ThreadingHTTPServer(('127.0.0.1', port), functools.partial(NoCacheHandler, directory=root))
+    print(f'serving {root} on {port}')
+    server.serve_forever()

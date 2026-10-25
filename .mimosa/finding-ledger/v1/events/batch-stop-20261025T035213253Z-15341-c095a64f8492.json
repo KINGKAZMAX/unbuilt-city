@@ -1,0 +1,194 @@
+{
+  "schemaVersion": "mimosa-finding-ledger-batch/v1",
+  "batchId": "stop-20261025T035213253Z-15341-c095a64f8492",
+  "runId": "20261025T035213253Z-15341-c095a64f8492",
+  "runStatus": "completed",
+  "coverage": {
+    "status": "complete",
+    "reasons": []
+  },
+  "source": {
+    "component": "zcode-hook",
+    "operationId": "Stop"
+  },
+  "revision": "789650cbe289e4979f9f2275bf7d03c86046ef11",
+  "diffHash": "5a350feddb1239bdb74637dcb7003b6d3adf162d84cece23bd28a54e8de83c0a",
+  "rulesVersion": "unavailable",
+  "sessionHash": "07b1fbad4fc931d75e9ca34f68a23e2cd85da09d98a78ee5f67ae27808816c6c",
+  "reportRef": ".mimosa/reports/task-review-session_a7e03409c70f873995bc47e515485813-20261025T035213253Z-15341-c095a64f8492.json",
+  "events": [
+    {
+      "eventId": "hook-a6e9ab5cd20edd5e31ce3eedfefa9e5d",
+      "findingId": "mimosa-2f77c03e655032b912a0ce6f",
+      "type": "finding_observed",
+      "at": "2026-10-24T18:39:01.648Z",
+      "identity": {
+        "projectRelativeFile": "src/vehicle.js",
+        "ruleId": "security",
+        "codeEvidenceHash": "aab807d6d3634ef85d2e2541edbd8f15c6a94a83c55490ddeb4b51605b78ad3d",
+        "confidence": "stable"
+      },
+      "scope": "direct",
+      "line": 50,
+      "endLine": 50,
+      "reasonCode": "advisory",
+      "reportedToAgent": true,
+      "evidence": {
+        "kind": "source",
+        "boundary": "candidate",
+        "producer": "deterministic",
+        "evidenceHash": "aab807d6d3634ef85d2e2541edbd8f15c6a94a83c55490ddeb4b51605b78ad3d"
+      },
+      "sequence": 0
+    },
+    {
+      "eventId": "hook-05cda88e158402f387822f87b1e0845c",
+      "findingId": "mimosa-20e63020e9cc38469c2bde59",
+      "type": "finding_observed",
+      "at": "2026-10-24T18:39:01.648Z",
+      "identity": {
+        "projectRelativeFile": "src/vehicle.js",
+        "ruleId": "security",
+        "codeEvidenceHash": "fead5b00ec2ad67a925332cdab62c261ab369d838c9901a48e44f4b55d49003d",
+        "confidence": "stable"
+      },
+      "scope": "direct",
+      "line": 66,
+      "endLine": 66,
+      "reasonCode": "advisory",
+      "reportedToAgent": true,
+      "evidence": {
+        "kind": "source",
+        "boundary": "candidate",
+        "producer": "deterministic",
+        "evidenceHash": "fead5b00ec2ad67a925332cdab62c261ab369d838c9901a48e44f4b55d49003d"
+      },
+      "sequence": 1
+    },
+    {
+      "eventId": "hook-9128e07545645843aafeaf85540e39c1",
+      "findingId": "mimosa-7651cb54193845e6f074b415",
+      "type": "finding_observed",
+      "at": "2026-10-25T03:52:13.253Z",
+      "identity": {
+        "projectRelativeFile": "src/assets.js",
+        "ruleId": "security",
+        "codeEvidenceHash": "d800ec3f6a7f326a835d996adea95f69469995d1c9bfd7852d7a863b0da5573c",
+        "confidence": "stable"
+      },
+      "scope": "direct",
+      "line": 60,
+      "endLine": 60,
+      "reasonCode": "observe",
+      "reportedToAgent": false,
+      "evidence": {
+        "kind": "source",
+        "boundary": "candidate",
+        "producer": "deterministic",
+        "evidenceHash": "d800ec3f6a7f326a835d996adea95f69469995d1c9bfd7852d7a863b0da5573c"
+      },
+      "sequence": 2
+    },
+    {
+      "eventId": "hook-bf47b8f6b334f249913d4641b3afab92",
+      "findingId": "mimosa-329afb8c27a4c52980fa7ea3",
+      "type": "finding_observed",
+      "at": "2026-10-25T03:52:13.253Z",
+      "identity": {
+        "projectRelativeFile": "src/vehicle.js",
+        "ruleId": "security",
+        "codeEvidenceHash": "80e37a6785abe8d75ad1d43d2cde70a0bd648ff58d678aa99aebad765da97624",
+        "confidence": "stable"
+      },
+      "scope": "direct",
+      "line": 63,
+      "endLine": 63,
+      "reasonCode": "observe",
+      "reportedToAgent": false,
+      "evidence": {
+        "kind": "source",
+        "boundary": "candidate",
+        "producer": "deterministic",
+        "evidenceHash": "80e37a6785abe8d75ad1d43d2cde70a0bd648ff58d678aa99aebad765da97624"
+      },
+      "sequence": 3
+    },
+    {
+      "eventId": "hook-d5b62aa6c043f4665ad9e23b4b96f4bc",
+      "findingId": "mimosa-3f6764f50ff549f32bd35014",
+      "type": "finding_observed",
+      "at": "2026-10-25T03:52:13.253Z",
+      "identity": {
+        "projectRelativeFile": "src/vehicle.js",
+        "ruleId": "security",
+        "codeEvidenceHash": "33e67ad644aba890a73791053e4e497b4d008c64cca9cde41a9bd0f76ef39764",
+        "confidence": "stable"
+      },
+      "scope": "direct",
+      "line": 74,
+      "endLine": 74,
+      "reasonCode": "observe",
+      "reportedToAgent": false,
+      "evidence": {
+        "kind": "source",
+        "boundary": "candidate",
+        "producer": "deterministic",
+        "evidenceHash": "33e67ad644aba890a73791053e4e497b4d008c64cca9cde41a9bd0f76ef39764"
+      },
+      "sequence": 4
+    }
+  ],
+  "observedFindingIds": [
+    "mimosa-7651cb54193845e6f074b415",
+    "mimosa-2f77c03e655032b912a0ce6f",
+    "mimosa-329afb8c27a4c52980fa7ea3",
+    "mimosa-3f6764f50ff549f32bd35014",
+    "mimosa-e6e7d7bb8543e1d3581622ce",
+    "mimosa-cd1f3fa3b0f34a7e63937e2b",
+    "mimosa-7f3dc9d0d286158417978fe8",
+    "mimosa-16d82dbdfb16f38ca4748943"
+  ],
+  "verifiedFiles": [
+    {
+      "file": "src/assets.js",
+      "direct": "complete",
+      "projectContext": "partial"
+    },
+    {
+      "file": "src/vehicle.js",
+      "direct": "complete",
+      "projectContext": "partial"
+    },
+    {
+      "file": "src/peds.js",
+      "direct": "complete",
+      "projectContext": "partial"
+    },
+    {
+      "file": "src/player.js",
+      "direct": "complete",
+      "projectContext": "partial"
+    },
+    {
+      "file": "src/citymesh.js",
+      "direct": "complete",
+      "projectContext": "partial"
+    },
+    {
+      "file": "src/main.js",
+      "direct": "complete",
+      "projectContext": "partial"
+    },
+    {
+      "file": "src/atlas-state.js",
+      "direct": "complete",
+      "projectContext": "partial"
+    },
+    {
+      "file": "dev-server.py",
+      "direct": "complete",
+      "projectContext": "partial"
+    }
+  ],
+  "recordedAt": "2026-10-25T03:52:13.738Z"
+}

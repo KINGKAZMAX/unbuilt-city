@@ -1,0 +1,118 @@
+// Character picker: pick the body you walk the city in. Real model thumbnails
+// (rendered once, offscreen), a large preview image on the title screen, and
+// the same card strip inside the pause menu for mid-journey vessel swaps.
+import * as THREE from 'three';
+import { charKeys, model, clips, modelsReady, charHeight } from './assets.js';
+import { getSelectedChar, setSelectedChar } from './charsel.js';
+
+const NAMES = {
+  skid: '小学生', grandma: '奶奶', lady: '白领', courier: '外卖员',
+  cashier: '收银员', guard: '保安', ceo: '总裁',
+  corgi: '柯基', duck: '鸭子', fox: '狐狸', squirrel: '松鼠',
+  koala: '考拉', chick: '小鸡',
+  minionA: '小精灵·壹', minionB: '小精灵·贰', minionC: '小精灵·叁', minionD: '小精灵·肆',
+};
+const ORDER = ['skid', 'courier', 'lady', 'grandma', 'cashier', 'guard', 'ceo',
+  'corgi', 'duck', 'fox', 'squirrel', 'koala', 'chick',
+  'minionA', 'minionB', 'minionC', 'minionD'];
+
+let shots = {};   // char key -> dataURL (rendered once at init)
+
+// Offscreen render of every character in its idle pose. Skinned figures
+// follow their bones, not Box3's bind-pose bounds — so XZ centers on the
+// posed skeleton while Y/height stays on the bind box (idle bobs the root).
+function posedBox(root, mixer) {
+  mixer?.update(0.35);
+  const box = new THREE.Box3();
+  box.makeEmpty();
+  const v = new THREE.Vector3();
+  root.updateMatrixWorld(true);
+  root.traverse(o => { if (o.isBone) box.expandByPoint(o.getWorldPosition(v)); });
+  if (box.isEmpty()) box.setFromObject(root);
+  return box;
+}
+
+function renderThumbnails() {
+  const W = 128, H = 160;
+  const canvas = document.createElement('canvas');
+  const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true, preserveDrawingBuffer: true });
+  renderer.setSize(W, H, false);
+  renderer.setClearColor(0x000000, 0);
+  const scene = new THREE.Scene();
+  scene.add(new THREE.HemisphereLight(0xf2ede4, 0x23262c, 1.5));
+  const dir = new THREE.DirectionalLight(0xfff4e6, 1.6);
+  dir.position.set(2, 4, 3);
+  scene.add(dir);
+  const camera = new THREE.PerspectiveCamera(34, W / H, 0.05, 60);
+  const out = {};
+  for (const key of ORDER) {
+    const root = model('char', key);
+    if (!root) continue;
+    scene.add(root);
+    let mixer = null;
+    const one = clips('char', key).find(c => /^idle$/i.test(c.name));
+    if (one) {
+      mixer = new THREE.AnimationMixer(root);
+      mixer.clipAction(one).play();
+    }
+    const bind = new THREE.Box3().setFromObject(root);
+    const bc = posedBox(root, mixer).getCenter(new THREE.Vector3());
+    // Catalog height is the trustworthy scale — Box3 on a skinned clone can
+    // collapse to a degenerate bind box and zoom the camera into the torso.
+    const h = charHeight(key);
+    camera.position.set(h * 0.45, h * 0.72, h * 2.75);
+    camera.lookAt(bc.x, h * 0.52, bc.z);
+    renderer.render(scene, camera);
+    out[key] = canvas.toDataURL('image/png');
+    scene.remove(root);
+  }
+  renderer.dispose();
+  return out;
+}
+
+function showPreview(key) {
+  const img = document.querySelector('#char-preview img');
+  if (img && shots[key]) img.src = shots[key];
+}
+
+function markSelected(container) {
+  const sel = getSelectedChar() || 'skid';
+  container.querySelectorAll('.char-card').forEach(c =>
+    c.classList.toggle('selected', c.dataset.char === sel));
+}
+
+function buildCards(container, onPick) {
+  container.replaceChildren();
+  for (const key of ORDER) {
+    if (!model('char', key)) continue;
+    const card = document.createElement('button');
+    card.type = 'button';
+    card.className = 'char-card';
+    card.dataset.char = key;
+    card.setAttribute('role', 'option');
+    card.innerHTML = `<img alt="${NAMES[key] || key}" src="${shots[key] || ''}" draggable="false"><span>${NAMES[key] || key}</span>`;
+    card.addEventListener('click', () => {
+      setSelectedChar(key);
+      markSelected(container);
+      if (key !== getSelectedChar()) showPreview(key);
+      document.querySelectorAll('#char-list, #pause-chars').forEach(markSelected);
+      showPreview(getSelectedChar() || 'skid');
+      onPick?.(key);
+    });
+    container.appendChild(card);
+  }
+  markSelected(container);
+}
+
+export function initCharPicker({ onPick } = {}) {
+  if (!modelsReady()) return;
+  const listEl = document.querySelector('#char-list');
+  if (!listEl) return;
+  const sel = getSelectedChar() || 'skid';
+  if (!getSelectedChar()) setSelectedChar(sel);
+  shots = renderThumbnails();
+  buildCards(listEl, onPick);
+  const pauseEl = document.querySelector('#pause-chars');
+  if (pauseEl) buildCards(pauseEl, onPick);
+  showPreview(sel);
+}

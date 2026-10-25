@@ -1,0 +1,349 @@
+// Kenney CC0 GLB models (cars / blocky characters / nature), fetched once and
+// cloned per instance. Every accessor returns undefined until preloadModels()
+// resolves or when a file is missing, so all call sites keep their procedural
+// fallback and Node test runs never touch browser-only code paths.
+import * as THREE from 'three';
+
+const CATALOG = {
+  car: {
+    sedan:  { url: 'assets/models/cars/sedan.glb', length: 4.5 },
+    hatch:  { url: 'assets/models/cars/hatchback-sports.glb', length: 3.8 },
+    sports: { url: 'assets/models/cars/race-future.glb', length: 4.3 },
+    pickup: { url: 'assets/models/cars/truck.glb', length: 5.1 },
+    van:    { url: 'assets/models/cars/van.glb', length: 5.4 },
+    taxi:   { url: 'assets/models/cars/taxi.glb', length: 4.5 },
+    police: { url: 'assets/models/cars/police.glb', length: 4.7 },
+  },
+  char: {
+    // Gobkit CC0 rigged characters (+Z forward, metres, embedded textures,
+    // named clips: Walk/Run/Idle/Death/Attack — animals lowercase).
+    skid:     { url: 'assets/models/gobkit/Schoolkid.glb', height: 1.5 },
+    grandma:  { url: 'assets/models/gobkit/GrandmaShopper.glb', height: 1.58 },
+    lady:     { url: 'assets/models/gobkit/OfficeLady.glb', height: 1.66 },
+    courier:  { url: 'assets/models/gobkit/FoodCourier.glb', height: 1.72 },
+    cashier:  { url: 'assets/models/gobkit/Cashier.glb', height: 1.7 },
+    guard:    { url: 'assets/models/gobkit/SecurityGuard.glb', height: 1.78 },
+    ceo:      { url: 'assets/models/gobkit/CompanyCeo.glb', height: 1.74 },
+    corgi:    { url: 'assets/models/gobkit/Corgi.glb', height: 0.42, quad: true },
+    duck:     { url: 'assets/models/gobkit/Duck.glb', height: 0.36, quad: true },
+    fox:      { url: 'assets/models/gobkit/Fox.glb', height: 0.55, quad: true },
+    squirrel: { url: 'assets/models/gobkit/Squirrel.glb', height: 0.26, quad: true },
+    koala:    { url: 'assets/models/gobkit/Koala.glb', height: 0.62, quad: true },
+    chick:    { url: 'assets/models/gobkit/Chick.glb', height: 0.24, quad: true },
+    minionA:  { url: 'assets/models/gobkit/minion-a01.glb', height: 1.05 },
+    minionB:  { url: 'assets/models/gobkit/minion-b01.glb', height: 1.05 },
+    minionC:  { url: 'assets/models/gobkit/minion-c01.glb', height: 1.0 },
+    minionD:  { url: 'assets/models/gobkit/minion-d01.glb', height: 1.1 },
+  },
+  tree: {
+    pineA:  { grim: true, url: 'assets/models/nature/tree_pineRoundC.glb', height: 4.6, bake: true },
+    pineB:  { grim: true, url: 'assets/models/nature/tree_pineRoundD.glb', height: 4.2, bake: true },
+    pineC:  { grim: true, url: 'assets/models/nature/tree_pineRoundE.glb', height: 5.0, bake: true },
+    blocks: { grim: true, url: 'assets/models/nature/tree_blocks.glb', height: 4.4, bake: true },
+    dark:   { grim: true, url: 'assets/models/nature/tree_blocks_dark.glb', height: 4.4, bake: true },
+  },
+  street: {
+    lamp:      { url: 'assets/models/street/light-curved.glb', height: 5.2, bake: true },
+    lampDouble:{ url: 'assets/models/street/light-curved-double.glb', height: 5.2, bake: true },
+    traffic:   { url: 'assets/models/street/traffic-light.glb', height: 3.4, bake: true },
+    dumpster:  { url: 'assets/models/street/dumpster.glb', height: 1.25, bake: true },
+  },
+};
+
+const CHAR_KEYS = Object.keys(CATALOG.char);
+const QUAD_KEYS = CHAR_KEYS.filter(k => CATALOG.char[k].quad);
+// Minions hold vigil by the thresholds only (no walk clip) — never roam.
+const BYSTANDER_KEYS = CHAR_KEYS.filter(k => /^minion/.test(k));
+const BIPED_KEYS = CHAR_KEYS.filter(k => !CATALOG.char[k].quad && !BYSTANDER_KEYS.includes(k));
+const TREE_KEYS = Object.keys(CATALOG.tree);
+const store = new Map();   // "kind:name" -> { template, clips, spec, dominant, hasSkin }
+let state = 'idle';        // idle | loading | ready | failed
+let cloneSkinned = null;   // SkeletonUtils.clone — set during preload
+
+// Skinned characters need SkeletonUtils.clone: plain .clone(true) leaves the
+// skeleton's bone references pointing at the original rig and the mesh never
+// renders. Node-animated and static models clone normally.
+function cloneTemplate(entry) {
+  return entry.hasSkin && cloneSkinned ? cloneSkinned(entry.template) : entry.template.clone(true);
+}
+
+export function modelsReady() { return state === 'ready'; }
+export function charKeys() { return CHAR_KEYS; }
+export function treeKeys() { return TREE_KEYS; }
+
+export function model(kind, name) {
+  const entry = store.get(`${kind}:${name}`);
+  return entry ? cloneTemplate(entry) : undefined;
+}
+
+export function clips(kind, name) {
+  const entry = store.get(`${kind}:${name}`);
+  return entry ? entry.clips : [];
+}
+
+// Catalog gameplay height — the reliable scale reference for framing UI,
+// since Box3 on a skinned clone can collapse to a degenerate bind box.
+export function charHeight(name) {
+  return CATALOG.char[name]?.height ?? 1.6;
+}
+
+// Street mix: mostly people, with the occasional Corgi or Fox on the sidewalk.
+export function randomChar() {
+  const pool = Math.random() < 0.75 ? BIPED_KEYS : QUAD_KEYS;
+  const name = pool[(Math.random() * pool.length) | 0];
+  return [name, model('char', name)];
+}
+
+// Clone with per-instance material copies, blending opaque surfaces toward
+// `hex` — the exhibition car (荧光红) and the ivory observer are built on this.
+export function tintedModel(kind, name, hex, strength = 0.82) {
+  const entry = store.get(`${kind}:${name}`);
+  if (!entry) return undefined;
+  const target = new THREE.Color(hex);
+  const root = cloneTemplate(entry);
+  root.traverse(o => {
+    if (!o.isMesh) return;
+    const swap = m => {
+      if (m.transparent && m.opacity < 0.6) return m;   // keep glass
+      const c = m.clone();
+      c.color.lerp(target, strength);
+      return c;
+    };
+    o.material = Array.isArray(o.material) ? o.material.map(swap) : swap(o.material);
+  });
+  return root;
+}
+
+// GLTFLoader comes from the pinned three addons (import map) and is imported
+// lazily so Node test runs never evaluate it.
+// GLTFLoader comes from the pinned three addons (import map) and is imported
+// lazily so Node test runs never evaluate it. The import races a short
+// timeout: an unreachable CDN must never hold up the boot sequence.
+const ADDON_TIMEOUT = 4000;
+function withTimeout(promise, ms) {
+  return Promise.race([
+    promise,
+    new Promise((_, reject) => setTimeout(() => reject(new Error('addon import timeout')), ms)),
+  ]);
+}
+
+export async function preloadModels(onStep) {
+  if (state === 'ready' || state === 'loading') return state;
+  state = 'loading';
+  try {
+    const [{ GLTFLoader }, { mergeGeometries }, { clone: skelClone }] = await Promise.all([
+      withTimeout(import('three/addons/loaders/GLTFLoader.js'), ADDON_TIMEOUT),
+      withTimeout(import('three/addons/utils/BufferGeometryUtils.js'), ADDON_TIMEOUT),
+      withTimeout(import('three/addons/utils/SkeletonUtils.js'), ADDON_TIMEOUT),
+    ]);
+    cloneSkinned = skelClone;
+    const loader = new GLTFLoader();
+    const jobs = [];
+    for (const kind of Object.keys(CATALOG)) {
+      for (const [name, spec] of Object.entries(CATALOG[kind])) {
+        jobs.push(new Promise(resolve => {
+          loader.load(spec.url, gltf => {
+            prep(gltf.scene);
+            let hasSkin = false;
+            gltf.scene.traverse(o => { if (o.isSkinnedMesh) hasSkin = true; });
+            store.set(`${kind}:${name}`, {
+              template: gltf.scene, clips: gltf.animations || [], spec,
+              dominant: findDominant(gltf.scene), hasSkin,
+            });
+            onStep?.(store.size);
+            resolve();
+          }, undefined, () => resolve());   // missing file -> fallback art stays
+        }));
+      }
+    }
+    await Promise.all(jobs);
+    for (const entry of store.values()) fit(entry, mergeGeometries);
+    await calibrateVisualSizes();
+    state = store.size ? 'ready' : 'failed';
+  } catch {
+    state = 'failed';   // offline or blocked CDN: procedural art stands in
+  }
+  return state;
+}
+
+// Gobkit packs author at wildly different unit scales, and skinned meshes
+// render at a size no bounding box predicts (geometry, bones and bind
+// matrices disagree). The only honest measurement is a render: put the
+// figure in front of a known camera, read the pixel span, rescale so the
+// visual height matches the catalog height.
+async function calibrateVisualSizes() {
+  const skinned = [...store.values()].filter(e => e.hasSkin);
+  if (!skinned.length) return;
+  const W = 128, H = 256;
+  const canvas = document.createElement('canvas');
+  const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: false, preserveDrawingBuffer: true });
+  renderer.setSize(W, H, false);
+  renderer.setClearColor(0x000000, 0);
+  const scene = new THREE.Scene();
+  scene.add(new THREE.HemisphereLight(0xffffff, 0x444444, 2));
+  const camera = new THREE.PerspectiveCamera(34, W / H, 0.01, 4000);
+  const gl = renderer.getContext();
+  const px = new Uint8Array(W * H * 4);
+
+  for (const entry of skinned) {
+    const root = cloneSkinned ? cloneSkinned(entry.template) : entry.template.clone(true);
+    scene.add(root);
+    root.updateMatrixWorld(true);
+    // aim at the figure's mid-height as the bones place it
+    const bb = new THREE.Box3();
+    const v = new THREE.Vector3();
+    root.traverse(o => { if (o.isBone) bb.expandByPoint(o.getWorldPosition(v)); });
+    if (bb.isEmpty()) bb.setFromObject(root);
+    const c = bb.getCenter(new THREE.Vector3());
+    const guess = Math.max(0.5, (bb.max.y - bb.min.y) * 2.2);
+    camera.position.set(c.x + guess * 0.2, c.y, c.z + guess);
+    camera.lookAt(c.x, c.y, c.z);
+    renderer.render(scene, camera);
+    gl.readPixels(0, 0, W, H, gl.RGBA, gl.UNSIGNED_BYTE, px);
+    let minY = H, maxY = -1;
+    for (let y = 0; y < H; y++) {
+      for (let x = 0; x < W; x++) {
+        if (px[(y * W + x) * 4 + 3] > 10) { if (y < minY) minY = y; if (y > maxY) maxY = y; }
+      }
+    }
+    scene.remove(root);
+    if (maxY <= minY) continue;
+    const span = (maxY - minY) / H;
+    if (span < 0.005) continue;
+    const visualH = 2 * guess * Math.tan(camera.fov * Math.PI / 360) * span;
+    if (!Number.isFinite(visualH) || visualH <= 0) continue;
+    const k = entry.spec.height / visualH;
+    entry.template.scale.multiplyScalar(k);
+    // re-seat at the new scale
+    root.scale.copy(entry.template.scale);
+    root.updateMatrixWorld(true);
+    const bb2 = new THREE.Box3();
+    root.traverse(o => { if (o.isBone) bb2.expandByPoint(o.getWorldPosition(v)); });
+    if (!bb2.isEmpty()) {
+      const c2 = bb2.getCenter(new THREE.Vector3());
+      entry.template.position.x -= c2.x;
+      entry.template.position.z -= c2.z;
+      entry.template.position.y -= bb2.min.y;
+    }
+  }
+  renderer.dispose();
+}
+
+// GLTF PBR materials read oddly under the city's cheap Lambert lighting; the
+// Kenney palette is flat colors, so every surface lands on Lambert here.
+function prep(root) {
+  root.traverse(o => {
+    if (!o.isMesh) return;
+    o.castShadow = true;
+    o.receiveShadow = false;
+    const swap = m => new THREE.MeshLambertMaterial({
+      color: m.color ? m.color.clone() : new THREE.Color(0xffffff),
+      map: m.map || null,
+      vertexColors: !!m.vertexColors,
+      transparent: m.transparent, opacity: m.opacity,
+    });
+    o.material = Array.isArray(o.material) ? o.material.map(swap) : swap(o.material);
+    if (o.geometry && !o.geometry.attributes.uv && o.material.map) o.material.map = null;
+  });
+}
+
+function findDominant(root) {
+  let best = null, bestV = 0;
+  root.traverse(o => {
+    if (!o.isMesh) return;
+    o.geometry.computeBoundingBox();
+    const b = o.geometry.boundingBox, s = b.getSize(new THREE.Vector3());
+    const v = s.x * s.y * s.z;
+    if (v > bestV) { bestV = v; best = o; }
+  });
+  return best ? best.name : null;
+}
+
+// Skinned meshes report degenerate geometry bounds — their visible shape
+// comes from the bones. Measure the skeleton instead.
+function boneBox(root) {
+  const box = new THREE.Box3();
+  box.makeEmpty();
+  const v = new THREE.Vector3();
+  root.updateMatrixWorld(true);
+  root.traverse(o => { if (o.isBone) box.expandByPoint(o.getWorldPosition(v)); });
+  return box;
+}
+
+// Seat on y=0, center XZ; cars align their long axis to +Z at the gameplay
+// length, characters and trees to the requested height.
+function fit(entry, mergeGeometries) {
+  const { template, spec } = entry;
+  const measure = () => (entry.hasSkin ? boneBox(template) : new THREE.Box3().setFromObject(template));
+  let box = measure();
+  const size = box.getSize(new THREE.Vector3());
+  if (spec.length) {
+    const horizontal = Math.max(size.x, size.z);
+    if (size.x > size.z) template.rotation.y = Math.PI / 2;   // long axis -> Z
+    const k = spec.length / horizontal;
+    template.scale.setScalar(k);
+  } else {
+    const k = spec.height / Math.max(0.01, size.y);
+    template.scale.setScalar(k);
+  }
+  box = measure();   // re-measure at the new scale
+  const center = box.getCenter(new THREE.Vector3());
+  template.position.x -= center.x;
+  template.position.z -= center.z;
+  template.position.y -= box.min.y;
+  template.updateMatrixWorld(true);
+  if (spec.bake) {
+    if (spec.grim) gradeTree(template);
+    entry.merged = mergeTree(template, mergeGeometries);
+  }
+}
+
+// Grade Kenney's bright greens into the city's ink-and-ash palette: canopies
+// desaturate toward 陌上烟灰绿, trunks toward dark walnut. Shared templates,
+// so every instanced copy inherits the grade for free.
+const CANOPY_TARGET = new THREE.Color(0x5c665a);
+const TRUNK_TARGET = new THREE.Color(0x3b352d);
+function gradeTree(root) {
+  const hsl = { h: 0, s: 0, l: 0 };
+  root.traverse(o => {
+    if (!o.isMesh) return;
+    const apply = m => {
+      m.color.getHSL(hsl);
+      const canopy = hsl.h > 0.22 && hsl.h < 0.68 && hsl.s > 0.08;
+      m.color.lerp(canopy ? CANOPY_TARGET : TRUNK_TARGET, 0.62);
+      return m;
+    };
+    o.material = Array.isArray(o.material) ? o.material.map(apply) : apply(o.material);
+  });
+}
+
+// Bake one tree variant into a single geometry (+ material array) so the
+// whole forest renders as a handful of InstancedMeshes.
+function mergeTree(root, mergeGeometries) {
+  const geos = [], mats = [];
+  root.updateMatrixWorld(true);
+  root.traverse(o => {
+    if (!o.isMesh) return;
+    const g = o.geometry.clone().applyMatrix4(o.matrixWorld);
+    g.deleteAttribute('tangent'); g.deleteAttribute('normal');
+    g.computeVertexNormals();
+    geos.push(g);
+    mats.push(...(Array.isArray(o.material) ? o.material : [o.material]));
+  });
+  if (!geos.length) return null;
+  // Groups keep one slot per source mesh, so the material array stays aligned.
+  // A lone geometry carries no draw groups — an array material there would
+  // render nothing, so collapse it to a single material.
+  if (geos.length === 1) {
+    return { geometry: geos[0], materials: mats.length === 1 ? mats[0] : mats };
+  }
+  const merged = mergeGeometries(geos, true);
+  return merged && { geometry: merged, materials: mats };
+}
+
+// Baked static geometry (+ material array) for instanced props: trees and
+// street furniture share the same merge pipeline.
+export function bakedVariant(kind, name) {
+  const entry = store.get(`${kind}:${name}`);
+  return entry?.merged || null;
+}

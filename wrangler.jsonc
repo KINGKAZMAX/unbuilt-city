@@ -1,0 +1,9 @@
+{
+  // Cloudflare Workers 静态资产部署：整个目录原样上线，无需构建。
+  "name": "unbuilt-city",
+  "compatibility_date": "2026-10-01",
+  "assets": {
+    "directory": "./",
+    "not_found_handling": "none"
+  }
+}

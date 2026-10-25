@@ -1,0 +1,486 @@
+{
+  "schema_version": "mimosa-task-review/v2",
+  "run_id": "20261025T035213253Z-15341-c095a64f8492",
+  "run_status": "completed",
+  "errors": [],
+  "coverage": {
+    "schema_version": "mimosa-hook-coverage/v1",
+    "status": "complete",
+    "scope": "hook_observed_diff",
+    "baseline": {
+      "complete": true,
+      "captured_files": 24,
+      "candidate_limit": 5000,
+      "truncated": false,
+      "enumeration_error_count": 0,
+      "snapshot_error_count": 0,
+      "compensated_target_count": 8
+    },
+    "change_tracking": {
+      "touched_observed": 8,
+      "touched_retained": 8,
+      "truncated": false,
+      "bash_mutation": true,
+      "bash_discovered": 8,
+      "bash_discovery_limit": 80,
+      "bash_discovery_truncated": false
+    },
+    "candidates": {
+      "eligible_files": 8,
+      "selected_files": 8,
+      "limit": 20,
+      "truncated": false
+    },
+    "scanning": {
+      "required_files": 8,
+      "scanned_files": 8,
+      "skipped_files": 0,
+      "failed_files": 0,
+      "project_checks_required": 0,
+      "project_checks_completed": 0
+    },
+    "notification": {
+      "eligible_findings": 3,
+      "detailed_findings": 0,
+      "detail_limit": 3,
+      "truncated": true
+    },
+    "reason_counts": {},
+    "reasons": [],
+    "reasons_truncated": false
+  },
+  "generated_at": "2026-10-25T03:52:13.253Z",
+  "session_id": "session_a7e03409c70f873995bc47e515485813",
+  "target": ".",
+  "revision": "789650cbe289e4979f9f2275bf7d03c86046ef11",
+  "rules_version": "unavailable",
+  "diff_hash": "5a350feddb1239bdb74637dcb7003b6d3adf162d84cece23bd28a54e8de83c0a",
+  "diff": {
+    "algorithm": "sha256",
+    "changed_file_count": 8,
+    "changed_files": [
+      {
+        "file": "dev-server.py",
+        "ranges": [
+          {
+            "start": 1,
+            "end": 18
+          }
+        ],
+        "before_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "after_hash": "b3032805477d8e31b1b9b36861bbf3fcc23e9f587d32441d88507981e1d16859"
+      },
+      {
+        "file": "src/assets.js",
+        "ranges": [
+          {
+            "start": 1,
+            "end": 236
+          }
+        ],
+        "before_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "after_hash": "69ebb1d63feafc945b1c258542005824bde91e10202bb6c3bb4bc5d4a08bee5d"
+      },
+      {
+        "file": "src/atlas-state.js",
+        "ranges": [
+          {
+            "start": 58,
+            "end": 59
+          }
+        ],
+        "before_hash": "51ab01b78f2a72d0d68a9310bf7252a7ad3a9e25b4799523908181fd768b0c9c",
+        "after_hash": "ae6186ffb409d273cc427212781cc62becb254b6b1bca550170c61c54295573a"
+      },
+      {
+        "file": "src/citymesh.js",
+        "ranges": [
+          {
+            "start": 5,
+            "end": 5
+          },
+          {
+            "start": 89,
+            "end": 126
+          },
+          {
+            "start": 130,
+            "end": 132
+          },
+          {
+            "start": 135,
+            "end": 135
+          },
+          {
+            "start": 152,
+            "end": 185
+          }
+        ],
+        "before_hash": "dd2aefa6d199fbf37a84f2b712f7ad682856a8d8d283744e189beeb69d7fa2b0",
+        "after_hash": "e0d9d6260e552c54ecefea62b57d27e9c221afbc8b13bcc210d32f77d0d5d65e"
+      },
+      {
+        "file": "src/main.js",
+        "ranges": [
+          {
+            "start": 18,
+            "end": 18
+          },
+          {
+            "start": 21,
+            "end": 21
+          },
+          {
+            "start": 30,
+            "end": 31
+          },
+          {
+            "start": 48,
+            "end": 48
+          }
+        ],
+        "before_hash": "b72ca078c545e547e1ada2f1140e281ac10683a2bd435927e57cc30a95160bce",
+        "after_hash": "deb45eeca1dde9a4197cf581c5d648ce0318f19873969f2a92a2b9a2be74ac1f"
+      },
+      {
+        "file": "src/peds.js",
+        "ranges": [
+          {
+            "start": 7,
+            "end": 7
+          },
+          {
+            "start": 35,
+            "end": 90
+          },
+          {
+            "start": 98,
+            "end": 106
+          },
+          {
+            "start": 122,
+            "end": 129
+          },
+          {
+            "start": 170,
+            "end": 183
+          }
+        ],
+        "before_hash": "a2b8d4ac5afc84cd928bc16ca080e68ec1759d85f85f4d50666f732f17eb2eb3",
+        "after_hash": "897ee7576f14eb98a363fad5939a65d142614c3b823043fdc369c4390c54ff31"
+      },
+      {
+        "file": "src/player.js",
+        "ranges": [
+          {
+            "start": 5,
+            "end": 5
+          },
+          {
+            "start": 26,
+            "end": 57
+          },
+          {
+            "start": 61,
+            "end": 61
+          },
+          {
+            "start": 67,
+            "end": 73
+          },
+          {
+            "start": 174,
+            "end": 175
+          },
+          {
+            "start": 177,
+            "end": 191
+          },
+          {
+            "start": 193,
+            "end": 193
+          }
+        ],
+        "before_hash": "0feddaedf199b458b5944e98464aa22941db0645864e4e445aeb55a5a83f4944",
+        "after_hash": "db901ca1517f9dcb0591e89a32f124e68d600da33a4e66be11ef8bffbb1bfb39"
+      },
+      {
+        "file": "src/vehicle.js",
+        "ranges": [
+          {
+            "start": 6,
+            "end": 6
+          },
+          {
+            "start": 26,
+            "end": 29
+          },
+          {
+            "start": 58,
+            "end": 88
+          },
+          {
+            "start": 90,
+            "end": 91
+          },
+          {
+            "start": 93,
+            "end": 104
+          },
+          {
+            "start": 106,
+            "end": 106
+          },
+          {
+            "start": 108,
+            "end": 113
+          },
+          {
+            "start": 117,
+            "end": 117
+          },
+          {
+            "start": 123,
+            "end": 123
+          },
+          {
+            "start": 128,
+            "end": 128
+          },
+          {
+            "start": 234,
+            "end": 234
+          },
+          {
+            "start": 278,
+            "end": 278
+          }
+        ],
+        "before_hash": "9c90bf9ed99cf96556ef22e25d086b95c6c0a638b5e8e4025b35b3ad13387593",
+        "after_hash": "79fbb016180522d66630e81a2dd3ec421aeeea9cf9f8dfae9e888e41611cab4b"
+      }
+    ]
+  },
+  "timing": {
+    "started_at": "2026-10-25T03:52:10.580Z",
+    "completed_at": "2026-10-25T03:52:13.253Z",
+    "duration_ms": 2673,
+    "measurement": "hook_wall_clock"
+  },
+  "tokens": {
+    "input": 0,
+    "output": 0,
+    "total": 0,
+    "model_calls": 0,
+    "measurement": "known-zero"
+  },
+  "telemetry": {
+    "schemaVersion": "mimosa-gate-telemetry/v1",
+    "profile": "gate",
+    "operation": "Stop",
+    "outcome": "complete",
+    "latencyMs": 2673,
+    "peakMemoryBytes": 232751104,
+    "memoryMeasurement": "max-observed-process-rss",
+    "scannedFiles": 8,
+    "cache": {
+      "hits": 0,
+      "misses": 0,
+      "measurement": "not-applicable"
+    },
+    "denyCount": 0,
+    "tokens": {
+      "input": 0,
+      "output": 0,
+      "total": 0,
+      "modelCalls": 0,
+      "measurement": "known-zero"
+    }
+  },
+  "finding_count": 3,
+  "rewake_finding_count": 0,
+  "evidence_boundary": {
+    "scan": "candidate",
+    "static_fix_verification": "observed_static_only",
+    "runtime_verification": "not_performed"
+  },
+  "finding_events": [
+    {
+      "finding_id": "mimosa-2f77c03e655032b912a0ce6f",
+      "file": "src/vehicle.js",
+      "line": 50,
+      "rule_id": "security",
+      "severity": "high",
+      "category": "弱随机数",
+      "status": "candidate",
+      "decision": "advisory",
+      "at": "2026-10-24T18:39:01.648Z",
+      "evidence": {
+        "kind": "source",
+        "boundary": "candidate",
+        "producer": "deterministic",
+        "source": "semgrep",
+        "evidence_hash": "aab807d6d3634ef85d2e2541edbd8f15c6a94a83c55490ddeb4b51605b78ad3d",
+        "runtime_oracle": false
+      }
+    },
+    {
+      "finding_id": "mimosa-20e63020e9cc38469c2bde59",
+      "file": "src/vehicle.js",
+      "line": 66,
+      "rule_id": "security",
+      "severity": "high",
+      "category": "弱随机数",
+      "status": "candidate",
+      "decision": "advisory",
+      "at": "2026-10-24T18:39:01.648Z",
+      "evidence": {
+        "kind": "source",
+        "boundary": "candidate",
+        "producer": "deterministic",
+        "source": "semgrep",
+        "evidence_hash": "fead5b00ec2ad67a925332cdab62c261ab369d838c9901a48e44f4b55d49003d",
+        "runtime_oracle": false
+      }
+    },
+    {
+      "finding_id": "mimosa-7651cb54193845e6f074b415",
+      "file": "src/assets.js",
+      "line": 60,
+      "severity": "high",
+      "category": "弱随机数",
+      "status": "candidate",
+      "decision": "observe",
+      "at": "2026-10-25T03:52:13.253Z",
+      "evidence": {
+        "kind": "static_scan",
+        "boundary": "candidate",
+        "producer": "deterministic",
+        "source": "semgrep",
+        "evidence_hash": "d800ec3f6a7f326a835d996adea95f69469995d1c9bfd7852d7a863b0da5573c",
+        "runtime_oracle": false
+      }
+    },
+    {
+      "finding_id": "mimosa-329afb8c27a4c52980fa7ea3",
+      "file": "src/vehicle.js",
+      "line": 63,
+      "severity": "high",
+      "category": "弱随机数",
+      "status": "candidate",
+      "decision": "observe",
+      "at": "2026-10-25T03:52:13.253Z",
+      "evidence": {
+        "kind": "static_scan",
+        "boundary": "candidate",
+        "producer": "deterministic",
+        "source": "semgrep",
+        "evidence_hash": "80e37a6785abe8d75ad1d43d2cde70a0bd648ff58d678aa99aebad765da97624",
+        "runtime_oracle": false
+      }
+    },
+    {
+      "finding_id": "mimosa-3f6764f50ff549f32bd35014",
+      "file": "src/vehicle.js",
+      "line": 74,
+      "severity": "high",
+      "category": "弱随机数",
+      "status": "candidate",
+      "decision": "observe",
+      "at": "2026-10-25T03:52:13.253Z",
+      "evidence": {
+        "kind": "static_scan",
+        "boundary": "candidate",
+        "producer": "deterministic",
+        "source": "semgrep",
+        "evidence_hash": "33e67ad644aba890a73791053e4e497b4d008c64cca9cde41a9bd0f76ef39764",
+        "runtime_oracle": false
+      }
+    }
+  ],
+  "findings": [
+    {
+      "finding_id": "mimosa-7651cb54193845e6f074b415",
+      "file": "src/assets.js",
+      "line": 60,
+      "end_line": 60,
+      "severity": "high",
+      "category": "弱随机数",
+      "kind": "semgrep",
+      "advisory": true,
+      "status": "candidate",
+      "evidence_boundary": "candidate",
+      "evidence": [
+        {
+          "kind": "static_scan",
+          "boundary": "candidate",
+          "producer": "deterministic",
+          "source": "semgrep",
+          "file": "src/assets.js",
+          "line": 60,
+          "evidence_hash": "d800ec3f6a7f326a835d996adea95f69469995d1c9bfd7852d7a863b0da5573c",
+          "runtime_oracle": false
+        }
+      ],
+      "already_reported_to_agent": false,
+      "selected_for_rewake": false
+    },
+    {
+      "finding_id": "mimosa-329afb8c27a4c52980fa7ea3",
+      "file": "src/vehicle.js",
+      "line": 63,
+      "end_line": 63,
+      "severity": "high",
+      "category": "弱随机数",
+      "kind": "semgrep",
+      "advisory": true,
+      "status": "candidate",
+      "evidence_boundary": "candidate",
+      "evidence": [
+        {
+          "kind": "static_scan",
+          "boundary": "candidate",
+          "producer": "deterministic",
+          "source": "semgrep",
+          "file": "src/vehicle.js",
+          "line": 63,
+          "evidence_hash": "80e37a6785abe8d75ad1d43d2cde70a0bd648ff58d678aa99aebad765da97624",
+          "runtime_oracle": false
+        }
+      ],
+      "already_reported_to_agent": false,
+      "selected_for_rewake": false
+    },
+    {
+      "finding_id": "mimosa-3f6764f50ff549f32bd35014",
+      "file": "src/vehicle.js",
+      "line": 74,
+      "end_line": 74,
+      "severity": "high",
+      "category": "弱随机数",
+      "kind": "semgrep",
+      "advisory": true,
+      "status": "candidate",
+      "evidence_boundary": "candidate",
+      "evidence": [
+        {
+          "kind": "static_scan",
+          "boundary": "candidate",
+          "producer": "deterministic",
+          "source": "semgrep",
+          "file": "src/vehicle.js",
+          "line": 74,
+          "evidence_hash": "33e67ad644aba890a73791053e4e497b4d008c64cca9cde41a9bd0f76ef39764",
+          "runtime_oracle": false
+        }
+      ],
+      "already_reported_to_agent": false,
+      "selected_for_rewake": false
+    }
+  ],
+  "artifacts": {
+    "immutable_report": ".mimosa/reports/task-review-session_a7e03409c70f873995bc47e515485813-20261025T035213253Z-15341-c095a64f8492.json",
+    "latest_report": ".mimosa/reports/task-review-session_a7e03409c70f873995bc47e515485813.json",
+    "history_summary": ".mimosa/history/run-20261025T035213253Z-15341-c095a64f8492.json"
+  }
+}
