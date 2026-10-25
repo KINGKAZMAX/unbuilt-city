@@ -7,6 +7,7 @@ slightly trimmed for size. No attribution required; credited as good practice.
 - `chars/*.glb` — [Kenney Blocky Characters](https://kenney.nl/assets/blocky-characters) (CC0, includes 27-clip animation library: walk/sprint/idle/holding-shoot/die…)
 - `nature/*.glb` — [Kenney Nature Kit](https://kenney.nl/assets/nature-kit) (CC0)
 - `street/*.glb` — [Kenney City Kit — Roads](https://kenney.nl/assets/city-kit-roads) (CC0; curved street lamps)
+- `gobkit/*.glb` — [Gobkit Free Models](https://gobkit.com/freebies) (CC0 1.0; rigged characters with named clips: humans, animals, minions)
 
 Integration: `src/assets.js` loads these at boot (three.js GLTFLoader, r160 via
 the pinned `three/addons` import map) and clones them per vehicle/pedestrian;
